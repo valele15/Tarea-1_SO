@@ -89,3 +89,4 @@ if (WIFEXITED(estado) && WEXITSTATUS(estado) == 0){
 
 cout << "\n[FIN] Todas las actividades del plan finalizaron con exito."<< endl;
 }
+}
