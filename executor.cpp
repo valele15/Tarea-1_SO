@@ -74,7 +74,7 @@ procesos_activos.push_back(pid);
 if (en_ejecucion>0){
 int estado;
 pid_t pid_finalizado=waitpid(-1, &estado, 0);
-if (pid_finalizado > 0){ en_ejecucion.;
+if (pid_finalizado > 0){ en_ejecucion--;
  for (auto it = procesos_activos.begin(); it != procesos_activos.end(); ++it) {
  if (*it == pid_finalizado){
  procesos_activos.erase(it);
