@@ -22,9 +22,6 @@ Tambien en el codigo abrimos el plan.txt para poder leerlo y seguir el formato. 
 
 3)-dag.cpp:
 
-
-
-
 el archivo se va a encargar de leer plan.txt y construir el dag con las actividades. Para esto se abre el archivo y se va leyendo linea por linea,separando cada dato : para obtener ID,nombre,tiempo y dependencias. La funcion quitarEspacios() sirve para eliminar los espacios que quedan al leer datos en el archivo. Si el tiempo viene vacio se elige un valor aleatoriamente entre 100 y 5000 ms,si viene con un numero o definido,entonces se convierte usando stoi. Las dependencias las separando utilizando una coma y se iban guardando por separado en un vector. Cada actividad se iba guardando dentro de DAG utilizando la ID. Ademas se calcula la cantidad de dependencias pendientes y se crea una relacion entre las actividades mediante vectores. Finalmente, se retorna el DAG con toda la información de las actividades para continuar con la ejecución del plan. 
 
 
@@ -43,38 +40,34 @@ Para realizar la prueba de estres,se puede ejecutar previamente generador.py,que
 
 ------------------------------------------------------------------------------------------------------------------------
 
-*Módulo Ejecutor y Gestión de Procesos
+*Modulo Ejecutor y Gestion de Procesos
 
-1) Manejo de Procesos (`fork`)
-Para ejecutar cada actividad del plan de manera independiente, utilizamos la llamada al sistema `fork()`. Cada vez que una tarea queda lista (es decir, cuando ya no tiene dependencias pendientes), el proceso padre crea un proceso hijo. Este hijo es el encargado de simular la ejecución de la actividad usando `usleep()` según el tiempo en milisegundos indicado. De esta forma, cada tarea se ejecuta en su propio espacio de memoria sin interferir con el resto.
+1)Manejo de procesos con fork: 
 
-2) Control de Concurrencia ($K$)
-Para no saturar el sistema y cumplir con el límite de concurrencia $K$, llevamos el control con un contador de procesos `en_ejecucion` y una cola de tareas `pendientes`. 
-- Mientras haya cupos disponibles (`en_ejecucion < K`) y tareas en la cola, el padre lanza nuevos procesos hijos.
-- Cuando se alcanza el límite $K$, el proceso padre se queda esperando a que al menos un hijo termine mediante `waitpid(-1, &estado, 0)`. Esto nos permite liberar el cupo inmediatamente y lanzar la siguiente tarea sin hacer uso de *busy-waiting* (espera activa), cuidando el consumo de CPU.
+para ejecutar cada actividad del plan independientemente de la otra usamos fork(),o sea, cada vez que una tarea queda lista porque ya no tiene dependencias pendientes, el proceso padre crea un hijo que se encarga de simular la ejecucion de la actividad con usleep() segn los milisegundos indicados, y así cada tarea corre en su propio espacio de memoria sin molestar al resto.
 
-3) Comunicación mediante Tuberías (`pipe`)
-Utilizamos tuberías anónimas (`pipe()`) para la comunicación entre el proceso hijo y el proceso padre:
-- Antes de hacer el `fork()`, el padre crea una tubería.
-- Al terminar su trabajo, el proceso hijo escribe un mensaje de confirmación en la tubería y cierra su extremo de escritura (`write`).
-- El proceso padre lee esta notificación (`read`), confirma que el insumo/tarea está listo y cierra sus descriptores correspondientes para evitar fugas de recursos.
+2)Control de concurrencia K: 
 
-4) Aislamiento de Errores
-El uso de procesos separados nos otorga aislamiento de memoria natural. Si un proceso hijo falla o termina de forma inesperada, no rompe la ejecución del proceso padre ni de los demás hijos.
-El padre analiza el estado de retorno de cada hijo con `WIFEXITED` y `WEXITSTATUS`. Solo si el hijo finalizó exitosamente (código `0`), el padre descuenta las dependencias de las tareas hijas vinculadas y las agrega a la cola de listos para su posterior ejecución.
+para no saturar el sistema y cumpir el limite de concurrencia K llevamos un contador de procesos en_ejecucion y una cola de tareas pendientes, entonces mientras haya cupos disponibles y tareas en la cola el padre va lanzando hijos, y cuando ya se llega al limite K el padre se queda esperando a que al menos un hijo termine con waitpid(-1, &estado, 0), lo que nos deja liberar el cupo al tiro y lanzar la siguiente tarea sin andar con busy-waiting, o sea espera activa, para no gastar CPU de más.
 
-5) Manejo de la señal `SIGINT` (Inspección / Ctrl+C)
-Para simular el corte por inspección, configuramos la captura de la señal `SIGINT` mediante `sigaction`:
-- Mantenemos un registro dinámico de los PIDs de todos los hijos en ejecución (`procesos_activos`).
-- Si se presiona `Ctrl+C`, se activa nuestra función manejadora, la cual recorre el arreglo de PIDs y envía un `kill(pid, SIGKILL)` a cada hijo activo para detener de inmediato todos los procesos antes de finalizar el programa.
+3)Comunicación con tuberías: 
 
+para la comunicacion entre hijo y padre usamos tuberías anonimas con pipe(), y la idea es que antes del fork() el padre crea la tubería, luego el hijo al terminar su trabajo escribe un mensaje de confirmacion en la tubería y cierra su extremo de escritura con write,el padre lee esa notificación con read, confirma que el insumo o la tarea está lista y cierra sus descriptores para no dejar recursos colgando.
+
+4)aislamiento de errores: 
+
+al usar procesos separados nos da aislamiento de memoria natural, así que si un hijo falla o termina de forma rara no rompe ni al padre ni a los demás hijos, y el padre revisa el estado de retorno de cada hijo con WIFEXITED y WEXITSTATUS, y solo si el hijo terminó bien con código 0 el padre descuenta las dependencias de las tareas hijas y las mete en la cola de listos para ejecutarlas después.
+
+5)Manejo de SIGINT (Ctrl+C):
+
+para simlar el corte por inspeccion se configuro la captura de SIGINT con sigaction, y se mantuvo un registro dinamico d los PIDs de todos los hijos activos en procesos_activos, de esa forma se activa la funcion manejadora que recorre ese arreglo de PIDs y le manda un kill(pid, SIGKILL) a cada hijo activo para detner todo antes de que termine el programa.
 -------------------------------------------------------------------------------------------------------------------------
 
 *Decisiones de Diseño (Módulo Ejecutor)
 
--Cambio de nombre a `leer_plan`: En el módulo del DAG/Parser, se decidio renombrar la función de lectura (inicialmente pensada como `parseo_plan`) a `leer_plan()`.Ya que con esto el nombre refleja de manera más directa su verdadero proposito: abrir el archivo `.txt`, interpretar las líneas y armar el mapa del DAG.
+-Cambio de nombre a leer_plan: en el módulo del DAG/Parser, se decidio renombrar la función de lectura (inicialmente pensada como parseo_plan) a leer_plan().Ya que con esto el nombre refleja de manera más directa su verdadero proposito: abrir el archivo .txt, interpretar las líneas y armar el mapa del DAG.
 
--Función principal `procesar_plan`: Nombramos la función del ejecutor como `procesar_plan()` para mantener una lectura mas natural en el código.
+-Función principal procesar_plan: nombramos la función del ejecutor como procesar_plan() para mantener una lectura mas natural en el código.
 
--Simplificación de variables: Usar nombres simples para las variables internas (como `procesos_activos`, `tuberia`, `pendientes` y `en_ejecucion`), logrando un código limpio y más legible.
+-Simplificación de variables: usar nombres simples para las variables internas (como procesos_activos, tuberia, pendientes y en_ejecucion), logrando un código limpio y más legible.
 
