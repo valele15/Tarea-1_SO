@@ -20,6 +20,14 @@ Luego de hacer eso el id y el nombre se guardan automaticamente,mientras que el 
 Tambien en el codigo abrimos el plan.txt para poder leerlo y seguir el formato. Guardamos todo en una misma linea luego va a tener una estructura como de lista. Para el tiempo simplemente se hacen ambos casos como el que es vacio y el que viene con el tiempo incluido.
 
 -generado.py:
+
 Creamos el generador para poder usalro como archivo de datos.osea un planificador de hasta 10,000 actividades.
 El programa va a generar un archivo llamado plan_grande.txt con las actividades 
 
+
+-Compilacion y ejecucion:
+
+Para compilar el programa utilizamos g++ , g++ -Wall -Wextra -std=c++17 -lpthread main.cpp dag.cpp executor.cpp -o planificador con esto. 
+Una vex compilado el programa, este se ejecuta indicando el archivo que tiene el plan de actividades y limita k 
+Por ejmplo cuanfo ejecuto ./planificador plan.txt 2, lo que hace el progrma es utilizar plan.txt como archivo y establece maximo 2 procesos ejecutandose al mismo tiempo. 
+Para realizar la prueba de estres,se puede ejecutar previamente generador.py,que genera una archivo con una hartas actividades para poder utilizarlas luego en el planificador 
