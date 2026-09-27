@@ -1,6 +1,6 @@
 # Tarea-1_SO
 
--plan.txt: plan de actividades diciocheras 
+1)-plan.txt: plan de actividades diciocheras 
 parser o parseo: que actividades existen y de que depende. para esto usamos el plan.txt en que este se encuentre todo en una linea,pero queremos clasificarlo en un plan de actividades como sale en el enunciado.
 
 Algo asi:
@@ -13,19 +13,28 @@ Algo asi:
   Como una especie de lista u separarllo en vez de hacerlo en una line 
   Si el tiempo viene vacio,asignar un valor aleatoria entre 100 y 5000 ms 
   
--planificador.cpp:
+2)-planificador.cpp:
 
 Para aquello tengo que ir leyendo el archivo por id,nombre,tiempo_ms y dependencias por lo qeu se separe cada uno con n:para guardar todo como en una estructura,como una especie de lista o actividad.
 Luego de hacer eso el id y el nombre se guardan automaticamente,mientras que el tiempo se convertia en texto a numero con stoi y se ponia como mencione enates que si tenia vacio se generaba uno aleatoriamente entre 100 y 5000. Las dependencias como vienen juntas,simplemente guardamos cada una poniendole entre medio una coma para asi guardarlas cada una por separada en un vector,lo de los numero aleatorios se hace con srand que hace que permita asignarle un tiempo en este caso le agregamos tiempo nulo para que sea mas aleatorio en vex de que salga la misma actividad  a cada rato.
 Tambien en el codigo abrimos el plan.txt para poder leerlo y seguir el formato. Guardamos todo en una misma linea luego va a tener una estructura como de lista. Para el tiempo simplemente se hacen ambos casos como el que es vacio y el que viene con el tiempo incluido.
 
--generado.py:
+
+3)-dag.cpp:
+
+
+
+
+el archivo se va a encargar de leer plan.txt y construir el dag con las actividades. Para esto se abre el archivo y se va leyendo linea por linea,separando cada dato : para obtener ID,nombre,tiempo y dependencias. La funcion quitarEspacios() sirve para eliminar los espacios que quedan al leer datos en el archivo. Si el tiempo viene vacio se elige un valor aleatoriamente entre 100 y 5000 ms,si viene con un numero o definido,entonces se convierte usando stoi. Las dependencias las separando utilizando una coma y se iban guardando por separado en un vector. Cada actividad se iba guardando dentro de DAG utilizando la ID. Ademas se calcula la cantidad de dependencias pendientes y se crea una relacion entre las actividades mediante vectores. Finalmente, se retorna el DAG con toda la información de las actividades para continuar con la ejecución del plan. 
+
+
+4)-generado.py:
 
 Creamos el generador para poder usalro como archivo de datos.osea un planificador de hasta 10,000 actividades.
 El programa va a generar un archivo llamado plan_grande.txt con las actividades 
 
 
--Compilacion y ejecucion:
+*Compilacion y ejecucion:
 
 Para compilar el programa utilizamos g++ , g++ -Wall -Wextra -std=c++17 -lpthread main.cpp dag.cpp executor.cpp -o planificador con esto. 
 Una vex compilado el programa, este se ejecuta indicando el archivo que tiene el plan de actividades y limita k 
