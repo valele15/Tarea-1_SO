@@ -42,23 +42,23 @@ Para realizar la prueba de estres,se puede ejecutar previamente generador.py,que
 
 *Modulo Ejecutor y Gestion de Procesos
 
-1)Manejo de procesos con fork: 
+1)-Manejo de procesos con fork: 
 
 para ejecutar cada actividad del plan independientemente de la otra usamos fork(),o sea, cada vez que una tarea queda lista porque ya no tiene dependencias pendientes, el proceso padre crea un hijo que se encarga de simular la ejecucion de la actividad con usleep() segn los milisegundos indicados, y así cada tarea corre en su propio espacio de memoria sin molestar al resto.
 
-2)Control de concurrencia K: 
+2)-Control de concurrencia K: 
 
 para no saturar el sistema y cumpir el limite de concurrencia K llevamos un contador de procesos en_ejecucion y una cola de tareas pendientes, entonces mientras haya cupos disponibles y tareas en la cola el padre va lanzando hijos, y cuando ya se llega al limite K el padre se queda esperando a que al menos un hijo termine con waitpid(-1, &estado, 0), lo que nos deja liberar el cupo al tiro y lanzar la siguiente tarea sin andar con busy-waiting, o sea espera activa, para no gastar CPU de más.
 
-3)Comunicación con tuberías: 
+3)-Comunicación con tuberías: 
 
 para la comunicacion entre hijo y padre usamos tuberías anonimas con pipe(), y la idea es que antes del fork() el padre crea la tubería, luego el hijo al terminar su trabajo escribe un mensaje de confirmacion en la tubería y cierra su extremo de escritura con write,el padre lee esa notificación con read, confirma que el insumo o la tarea está lista y cierra sus descriptores para no dejar recursos colgando.
 
-4)aislamiento de errores: 
+4)-aislamiento de errores: 
 
 al usar procesos separados nos da aislamiento de memoria natural, así que si un hijo falla o termina de forma rara no rompe ni al padre ni a los demás hijos, y el padre revisa el estado de retorno de cada hijo con WIFEXITED y WEXITSTATUS, y solo si el hijo terminó bien con código 0 el padre descuenta las dependencias de las tareas hijas y las mete en la cola de listos para ejecutarlas después.
 
-5)SIGINT:
+5)-SIGINT:
 
 para simlar el corte por inspeccion se configuro la captura de SIGINT con sigaction, y se mantuvo un registro dinamico d los PIDs de todos los hijos activos en procesos_activos, de esa forma se activa la funcion manejadora que recorre ese arreglo de PIDs y le manda un kill(pid, SIGKILL) a cada hijo activo para detner todo antes de que termine el programa.
 
