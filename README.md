@@ -61,6 +61,7 @@ al usar procesos separados nos da aislamiento de memoria natural, así que si un
 5)Manejo de SIGINT (Ctrl+C):
 
 para simlar el corte por inspeccion se configuro la captura de SIGINT con sigaction, y se mantuvo un registro dinamico d los PIDs de todos los hijos activos en procesos_activos, de esa forma se activa la funcion manejadora que recorre ese arreglo de PIDs y le manda un kill(pid, SIGKILL) a cada hijo activo para detner todo antes de que termine el programa.
+
 -------------------------------------------------------------------------------------------------------------------------
 
 *Decisiones de Diseño (Módulo Ejecutor)
