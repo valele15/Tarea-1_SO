@@ -58,7 +58,7 @@ para la comunicacion entre hijo y padre usamos tuberías anonimas con pipe(), y 
 
 al usar procesos separados nos da aislamiento de memoria natural, así que si un hijo falla o termina de forma rara no rompe ni al padre ni a los demás hijos, y el padre revisa el estado de retorno de cada hijo con WIFEXITED y WEXITSTATUS, y solo si el hijo terminó bien con código 0 el padre descuenta las dependencias de las tareas hijas y las mete en la cola de listos para ejecutarlas después.
 
-5)Manejo de SIGINT (Ctrl+C):
+5)SIGINT:
 
 para simlar el corte por inspeccion se configuro la captura de SIGINT con sigaction, y se mantuvo un registro dinamico d los PIDs de todos los hijos activos en procesos_activos, de esa forma se activa la funcion manejadora que recorre ese arreglo de PIDs y le manda un kill(pid, SIGKILL) a cada hijo activo para detner todo antes de que termine el programa.
 
