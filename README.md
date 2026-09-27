@@ -1,6 +1,6 @@
 # Tarea-1_SO
 # Valentina Mella-Paulette Saavedra 
-# Seccion 2
+# Seccion 02
 1)-plan.txt: plan de actividades diciocheras 
 parser o parseo: que actividades existen y de que depende. para esto usamos el plan.txt en que este se encuentre todo en una linea,pero queremos clasificarlo en un plan de actividades como sale en el enunciado.
 
