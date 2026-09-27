@@ -13,3 +13,8 @@ Algo asi:
   Como una especie de lista u separarllo en vez de hacerlo en una line 
   Si el tiempo viene vacio,asignar un valor aleatoria entre 100 y 5000 ms 
   
+-planificador.cpp:
+
+Para aquello tengo que ir leyendo el archivo por id,nombre,tiempo_ms y dependencias por lo qeu se separe cada uno con n:para guardar todo como en una estructura,como una especie de lista o actividad.
+Luego de hacer eso el id y el nombre se guardan automaticamente,mientras que el tiempo se convertia en texto a numero con stoi y se ponia como mencione enates que si tenia vacio se generaba uno aleatoriamente entre 100 y 5000. Las dependencias como vienen juntas,simplemente guardamos cada una poniendole entre medio una coma para asi guardarlas cada una por separada en un vector,lo de los numero aleatorios se hace con srand que hace que permita asignarle un tiempo en este caso le agregamos tiempo nulo para que sea mas aleatorio en vex de que salga el mismo numero a cada rato.
+Tambien en el codigo abrimos el plan.txt para poder leerlo y seguir el formato. Guardamos todo en una misma linea luego va a tener una estructura como de lista. Para el tiempo simplemente se hacen ambos casos como el que es vacio y el que viene con el tiempo incluido.
